@@ -25,6 +25,7 @@ namespace Dave
                 if (e.Distance <= 100)
                 {
                     Fire(3);
+                    SetBack(50);
                 }
                 else
                 {
