@@ -15,13 +15,13 @@ namespace Minesweeper
     {
         public static bool flagMode; // testing rectangles or placing flags
         public static bool running;
-        public static int x = 30; //number of rectangles in a row
+        public static int x = 16; //number of rectangles in a row
         public static int y = 16; //number of rectangles in a collumn
         public static int perSqrX = 1; //how many pixels are in one rectangle horizontally
         public static int persqrY = 1;//how many pixels are in one rectangle vertically 
         public static int sec = 0; // measuring time
         public static int min = 0;
-        public static int bombTotal = 99; //number of bombs at the begining
+        public static int bombTotal = 40; //number of bombs at the begining
         public static int bombCurrent = bombTotal; //bombTotal - flags = bombCurrent
         public static bool first = true; // first move
 
