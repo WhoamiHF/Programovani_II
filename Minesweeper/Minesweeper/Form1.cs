@@ -34,7 +34,8 @@ namespace Minesweeper
         private void button1_Click(object sender, EventArgs e)
         {
             flagMode = false;
-            label2.Text = string.Format("Mines left: {0}", bombCurrent);
+
+            label2.Text = string.Format("Mines left: {0}", bombTotal);
             timer1.Start();
             button1.Visible = false;
             button2.Visible = false;
@@ -49,6 +50,7 @@ namespace Minesweeper
             perSqrX = (this.Width - 60) / x;
             persqrY = (this.Height - 80) / y;
             DrawCage();
+            button5.Text = "I want to place flags";
         }
         //measuring time and displaying it
         private void timer1_Tick(object sender, EventArgs e)
@@ -285,12 +287,12 @@ namespace Minesweeper
             if (flagMode)
             {
                 flagMode = false;
-                button5.Text = "Fire";
+                button5.Text = "I want to place flags";
             }
             else
             {
                 flagMode = true;
-                button5.Text = "Flags";
+                button5.Text = "I want to fire";
             }
         }
 
@@ -406,6 +408,21 @@ namespace Minesweeper
             button3.Left = this.Width / 4;
             button3.Height = this.Height / 6;
             button3.Top = this.Height / 3;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            radioButton1.Checked = true;
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            radioButton1.Checked = true;
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            radioButton1.Checked = true;
         }
     }
     //class with map - map is hiden from form1 class

@@ -91,7 +91,6 @@
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(1088, 18);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
@@ -102,7 +101,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(682, 5);
+            this.button4.Location = new System.Drawing.Point(608, 5);
             this.button4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(100, 36);
@@ -115,21 +114,20 @@
             // button5
             // 
             this.button5.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.button5.Location = new System.Drawing.Point(924, 5);
+            this.button5.Location = new System.Drawing.Point(813, 5);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(100, 36);
+            this.button5.Size = new System.Drawing.Size(211, 36);
             this.button5.TabIndex = 5;
-            this.button5.Text = "Fire";
+            this.button5.Text = "I vant to place flags";
             this.button5.UseVisualStyleBackColor = false;
             this.button5.Visible = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 17);
+            this.label2.Location = new System.Drawing.Point(12, 10);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(103, 20);
+            this.label2.Size = new System.Drawing.Size(130, 30);
             this.label2.TabIndex = 6;
             this.label2.Text = "Mines left: 10";
             this.label2.Visible = false;
@@ -160,6 +158,7 @@
             this.textBox1.Size = new System.Drawing.Size(100, 26);
             this.textBox1.TabIndex = 9;
             this.textBox1.Visible = false;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // textBox2
             // 
@@ -168,6 +167,7 @@
             this.textBox2.Size = new System.Drawing.Size(100, 26);
             this.textBox2.TabIndex = 10;
             this.textBox2.Visible = false;
+            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // label4
             // 
@@ -196,6 +196,7 @@
             this.textBox3.Size = new System.Drawing.Size(100, 26);
             this.textBox3.TabIndex = 13;
             this.textBox3.Visible = false;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
             // 
             // button6
             // 
