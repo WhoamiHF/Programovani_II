@@ -60,6 +60,8 @@ namespace Minesweeper
                 min += 1;
             }
             label1.Text = string.Format("Time {0}:{1}", min, sec);
+
+
         }
 
         // returning everything into start position
@@ -309,13 +311,20 @@ namespace Minesweeper
                 textBox2.Text = string.Concat(y);
                 textBox3.Visible = true;
                 textBox3.Text = string.Concat(bombTotal);
+                radioButton1.Visible = true;
+                radioButton2.Visible = true;
+                radioButton3.Visible = true;
+                radioButton4.Visible = true;
+                radioButton1.Checked = true;
+
             }
             else if (button3.Text == "ok")
             {
-                if (textBox1.Text != "") x = int.Parse(textBox1.Text);
-                if (textBox2.Text != "") y = int.Parse(textBox2.Text);
-                if (textBox3.Text != "") bombTotal = int.Parse(textBox3.Text);
-                if (bombTotal + 9 >= x * y) bombTotal = x * y - 10;
+                    if (textBox1.Text != "") x = int.Parse(textBox1.Text);
+                    if (textBox2.Text != "") y = int.Parse(textBox2.Text);
+                    if (textBox3.Text != "") bombTotal = int.Parse(textBox3.Text);
+                    if (bombTotal + 9 >= x * y) bombTotal = x * y - 10;
+                
                 bombCurrent = bombTotal;
                 button1.Visible = true;
                 button2.Visible = true;
@@ -326,6 +335,10 @@ namespace Minesweeper
                 textBox1.Visible = false;
                 textBox2.Visible = false;
                 textBox3.Visible = false;
+                radioButton1.Visible = false;
+                radioButton2.Visible = false;
+                radioButton3.Visible = false;
+                radioButton4.Visible = false;
             }
 
         }
@@ -355,6 +368,45 @@ namespace Minesweeper
                 }
             }
         }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = "8";
+            textBox2.Text = "8";
+            textBox3.Text = "10";
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = "16";
+            textBox2.Text = "16";
+            textBox3.Text = "40";
+        }
+
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox1.Text = "24";
+            textBox2.Text = "24";
+            textBox3.Text = "99";
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            button1.Width = this.Width / 2;
+            button1.Left = this.Width / 4;
+            button1.Height = this.Height / 6;
+            button1.Top = this.Height / 6;
+
+            button2.Width = this.Width / 2;
+            button2.Left = this.Width / 4;
+            button2.Height = this.Height / 6;
+            button2.Top = this.Height / 2;
+
+            button3.Width = this.Width / 2;
+            button3.Left = this.Width / 4;
+            button3.Height = this.Height / 6;
+            button3.Top = this.Height / 3;
+        }
     }
     //class with map - map is hiden from form1 class
     public static class Map
@@ -366,6 +418,8 @@ namespace Minesweeper
         //place correct amount of mins into sheet
         public static void GenerateMins(int sqX, int sqY)
         {
+            map = new int[Form1.x + 1, Form1.y + 1];
+            revealedMap = new char[Form1.x + 1, Form1.y + 1];
             for (int i = 0; i < Form1.y; i++)
             {
                 for (int j = 0; j < Form1.x; j++)
@@ -410,11 +464,15 @@ namespace Minesweeper
                     }
                 }
             }
+
             for (int j = -1; j < 2; j++)
             {
                 for (int k = -1; k < 2; k++)
                 {
-                    map[sqX + j, sqY + k] -= 100;
+                    if ((sqX + j >= 0) && (sqX + j < Form1.x) && (sqY + k >= 0) && (sqY + k < Form1.y))
+                    {
+                        map[sqX + j, sqY + k] -= 100;
+                    }
                 }
             }
             InicializeRevealedMap();
@@ -470,11 +528,19 @@ namespace Minesweeper
 
     public static class Solver
     {
+        public static int lines = 0;
+        public static int variables = 0;
         public static bool br = false;
+        public static Dictionary<string, int> dict;
+        public static int[,] matrixA= new int[100,100];
         public static void Solv()
         {
+            //dict.Clear();
+            lines = 0;
+            variables = 1;
             br = false;
             Basic();
+            if (!br) { Matrix();}
         }
         //check if situation is obvious around one rectangle
         public static void Basic()
@@ -506,18 +572,18 @@ namespace Minesweeper
                                     }
                                 }
                             }
-                            if ((Map.revealedMap[i, j] - '0' - flags == 0) && (spots != 0))
+                            int rest = Map.revealedMap[i, j] - '0' - flags;
+                            if ((rest == 0) && (spots != 0))
                             {
-                                Map.revealedMap[i, j] = '.';
                                 MarkSafe(i, j);
                                 br = true;
                             }
-                            else if ((Map.revealedMap[i, j] - '0' - flags == spots)&& (spots != 0))
+                            else if ((rest == spots) && (spots != 0))
                             {
-                                Map.revealedMap[i, j] = '.';
                                 MarkBombs(i, j);
                                 br = true;
                             }
+                            //else if (spots != 0) { AddLine(i, j,rest); }
                         }
                     }
                 }
@@ -556,6 +622,47 @@ namespace Minesweeper
                     }
                 }
             }
+        }
+        //Code bellow is under construction and it's not called by the rest of the code
+        //
+        //
+        //
+
+        public static void Matrix()
+        {
+            SolveMatrix();
+        }
+
+        public static void SolveMatrix()
+        {
+
+        }
+
+        public static void AddLine(int Ax,int Ay,int result)
+        {
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if ((i + Ax >= 0) && (i + Ax < Form1.x) && (j + Ay >= 0) && (j + Ay < Form1.y))
+                    {
+                        if (Map.revealedMap[i + Ax, j + Ay] == 'n')
+                        {
+                            string s = string.Format("{0},{1}", i + Ax, j + Ay);
+                            if (dict.ContainsKey(s))
+                            {
+                                matrixA[dict[s], lines] = 1;
+                            } else
+                            {
+                                dict.Add(s, variables);
+                                variables++;
+                            } 
+                        }
+                    }
+                }
+            }
+            matrixA[0, lines] = result;
+            lines += 1;
         }
     }
 }
