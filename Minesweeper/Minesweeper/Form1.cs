@@ -13,17 +13,18 @@ namespace Minesweeper
 
     public partial class Form1 : Form
     {
-        public static bool flagMode; // testing rectangles or placing flags
-        public static bool running;
-        public static int x = 16; //number of rectangles in a row
-        public static int y = 16; //number of rectangles in a collumn
-        public static int perSqrX = 1; //how many pixels are in one rectangle horizontally
-        public static int persqrY = 1;//how many pixels are in one rectangle vertically 
-        public static int sec = 0; // measuring time
-        public static int min = 0;
-        public static int bombTotal = 40; //number of bombs at the begining
-        public static int bombCurrent = bombTotal; //bombTotal - flags = bombCurrent
-        public static bool first = true; // first move
+        bool flagMode; // testing rectangles or placing flags
+        bool running;
+        int sec = 0; // measuring time
+        int min = 0;
+        bool first = true; // first move
+        int perSqrX = 1; //how many pixels are in one rectangle horizontally
+        int perSqrY = 1;//how many pixels are in one rectangle vertically 
+        int bombCurrent = BombTotal; //BombTotal - flags = bombCurrent
+
+        public static int X = 16; //number of rectangles in a row
+        public static int Y = 16; //number of rectangles in a collumn
+        public static int BombTotal = 40; //number of bombs at the begining
 
         public Form1()
         {
@@ -35,7 +36,7 @@ namespace Minesweeper
         {
             flagMode = false;
 
-            label2.Text = string.Format("Mines left: {0}", bombTotal);
+            label2.Text = string.Format("Mines left: {0}", BombTotal);
             timer1.Start();
             button1.Visible = false;
             button2.Visible = false;
@@ -47,8 +48,8 @@ namespace Minesweeper
             label1.Visible = true;
             label2.Visible = true;
             textBox4.Visible = true;
-            perSqrX = (this.Width - 60) / x;
-            persqrY = (this.Height - 80) / y;
+            perSqrX = (this.Width - 60) / X;
+            perSqrY = (this.Height - 80) / Y;
             DrawCage();
             button5.Text = "I want to place flags";
         }
@@ -67,7 +68,7 @@ namespace Minesweeper
         }
 
         // returning everything into start position
-        public void gameOver()
+        public void GameOver()
         {
             running = false;
             first = true;
@@ -86,14 +87,14 @@ namespace Minesweeper
             label1.Visible = false;
             label2.Visible = false;
             sec = 0; min = 0;
-            bombCurrent = bombTotal;
+            bombCurrent = BombTotal;
 
         }
 
         //menu button
         private void button4_Click(object sender, EventArgs e)
         {
-            gameOver(); ;
+            GameOver(); ;
         }
         // procedure for drawing cage called by pressing button1 (start game)
         public void DrawCage()
@@ -102,21 +103,21 @@ namespace Minesweeper
             graphicsObj = this.CreateGraphics();
             Pen myPen = new Pen(System.Drawing.Color.Black, 1);
 
-            int cageWidth = x * perSqrX;
-            int cageHeight = y * persqrY;
+            int cageWidth = X * perSqrX;
+            int cageHeight = Y * perSqrY;
             graphicsObj.DrawLine(myPen, 10, 30, 10 + cageWidth, 30);
             graphicsObj.DrawLine(myPen, 10, 30, 10, 30 + cageHeight);
             graphicsObj.DrawLine(myPen, 10 + cageWidth, 30, 10 + cageWidth, 30 + cageHeight);
             graphicsObj.DrawLine(myPen, 10, 30 + cageHeight, 10 + cageWidth, 30 + cageHeight);
 
-            for (int i = 1; i < x; i++)
+            for (int i = 1; i < X; i++)
             {
                 graphicsObj.DrawLine(myPen, 10 + i * perSqrX, 30, 10 + i * perSqrX, 30 + cageHeight);
             }
 
-            for (int i = 1; i < y; i++)
+            for (int i = 1; i < Y; i++)
             {
-                graphicsObj.DrawLine(myPen, 10, 30 + persqrY * i, 10 + cageWidth, 30 + persqrY * i);
+                graphicsObj.DrawLine(myPen, 10, 30 + perSqrY * i, 10 + cageWidth, 30 + perSqrY * i);
             }
         }
         //exit button
@@ -132,15 +133,15 @@ namespace Minesweeper
             if (running)
             {
                 int squareX = (e.X - 10) / (perSqrX);
-                int squareY = (e.Y - 30) / (persqrY);
-                if ((squareX >= 0) && (squareX < x) && (squareY >= 0) && (squareY < y))
+                int squareY = (e.Y - 30) / (perSqrY);
+                if ((squareX >= 0) && (squareX < X) && (squareY >= 0) && (squareY < Y))
                 {
                     if (flagMode) { FillFlag(squareX, squareY); }
                     else
                     {
                         label1.Text = string.Format("{0},{1}", squareX, squareY);
                         if (first) { first = false; Map.GenerateMins(squareX, squareY); }
-                        if (Map.revealedMap[squareX, squareY] == 'n')
+                        if (Map.RevealedMap[squareX, squareY] == 'n')
                         {
                             Show(squareX, squareY);
                         }
@@ -154,23 +155,23 @@ namespace Minesweeper
         public void FillFlag(int Fx, int Fy)
         {
             int xx = 10 + (Fx) * perSqrX;
-            int yy = 30 + (Fy) * persqrY;
+            int yy = 30 + (Fy) * perSqrY;
             System.Drawing.Graphics formGraphics = CreateGraphics();
             System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-            if (Map.revealedMap[Fx, Fy] == 'f')
+            if (Map.RevealedMap[Fx, Fy] == 'f')
             {
                 drawBrush.Color = System.Drawing.Color.White;
-                Map.revealedMap[Fx, Fy] = 'n';
+                Map.RevealedMap[Fx, Fy] = 'n';
                 bombCurrent += 1;
                 label2.Text = string.Format("Bombs: {0}", bombCurrent);
-                formGraphics.FillRectangle(drawBrush, new Rectangle(xx + 1, yy + 1, perSqrX - 1, persqrY - 1));
+                formGraphics.FillRectangle(drawBrush, new Rectangle(xx + 1, yy + 1, perSqrX - 1, perSqrY - 1));
             }
-            else if ((Map.revealedMap[Fx, Fy] == 'n') && (bombCurrent > 0))
+            else if ((Map.RevealedMap[Fx, Fy] == 'n') && (bombCurrent > 0))
             {
                 bombCurrent -= 1;
                 label2.Text = string.Format("Bombs: {0}", bombCurrent);
-                Map.revealedMap[Fx, Fy] = 'f';
-                formGraphics.FillRectangle(drawBrush, new Rectangle(xx + 1, yy + 1, perSqrX - 1, persqrY - 1));
+                Map.RevealedMap[Fx, Fy] = 'f';
+                formGraphics.FillRectangle(drawBrush, new Rectangle(xx + 1, yy + 1, perSqrX - 1, perSqrY - 1));
                 if (bombCurrent == 0)
                 {
                     if (Map.CheckWin())
@@ -187,59 +188,59 @@ namespace Minesweeper
         {
             System.Drawing.Graphics formGraphics = CreateGraphics();
             System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.DarkGray);
-            formGraphics.FillRectangle(drawBrush, new Rectangle(Fx, Fy, perSqrX - 1, persqrY - 1));
+            formGraphics.FillRectangle(drawBrush, new Rectangle(Fx, Fy, perSqrX - 1, perSqrY - 1));
         }
         //Show result of player´s move and mark it into revealed map
         public void Show(int Sx, int Sy)
         {
             int xx = 10 + (Sx) * perSqrX;
-            int yy = 30 + (Sy) * persqrY;
+            int yy = 30 + (Sy) * perSqrY;
             int Number = Map.Reveal(Sx, Sy);
-            if (Number == -1) { MessageBox.Show("You have lost!"); gameOver(); }
+            if (Number == -1) { MessageBox.Show("You have lost!"); GameOver(); }
             else
             {
                 string drawString = string.Concat(Number);
 
                 System.Drawing.Graphics formGraphics = CreateGraphics();
-                System.Drawing.Font drawFont = new System.Drawing.Font("Arial", 3 * persqrY / 4);
+                System.Drawing.Font drawFont = new System.Drawing.Font("Arial", 3 * perSqrY / 4);
                 System.Drawing.SolidBrush drawBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
                 if (Number >= 9)
                 {
-                    Map.revealedMap[Sx, Sy] = 'b';
+                    Map.RevealedMap[Sx, Sy] = 'b';
                 }
                 else if (Number == 0)
                 {
-                    Map.revealedMap[Sx, Sy] = 'v';
+                    Map.RevealedMap[Sx, Sy] = 'v';
                 }
                 else
                 {
                     string n = string.Concat(Number);
-                    Map.revealedMap[Sx, Sy] = n[0];
+                    Map.RevealedMap[Sx, Sy] = n[0];
                 }
                 if (Number == 0)
                 {
 
                     FillZero(xx + 1, yy + 1);
-                    if (Sx < x - 1)
+                    if (Sx < X - 1)
                     {
-                        if (Map.revealedMap[Sx + 1, Sy] == 'n') { Show(Sx + 1, Sy); }
-                        if (Sy < y - 1 && Map.revealedMap[Sx + 1, Sy + 1] == 'n') { Show(Sx + 1, Sy + 1); }
-                        if (Sy > 0 && Map.revealedMap[Sx + 1, Sy - 1] == 'n') { Show(Sx + 1, Sy - 1); }
+                        if (Map.RevealedMap[Sx + 1, Sy] == 'n') { Show(Sx + 1, Sy); }
+                        if (Sy < Y - 1 && Map.RevealedMap[Sx + 1, Sy + 1] == 'n') { Show(Sx + 1, Sy + 1); }
+                        if (Sy > 0 && Map.RevealedMap[Sx + 1, Sy - 1] == 'n') { Show(Sx + 1, Sy - 1); }
                     }
                     if (Sx > 0)
                     {
-                        if (Map.revealedMap[Sx - 1, Sy] == 'n') { Show(Sx - 1, Sy); }
-                        if (Sy < y - 1 && Map.revealedMap[Sx - 1, Sy + 1] == 'n') { Show(Sx - 1, Sy + 1); }
-                        if (Sy > 0 && Map.revealedMap[Sx - 1, Sy - 1] == 'n') { Show(Sx - 1, Sy - 1); }
+                        if (Map.RevealedMap[Sx - 1, Sy] == 'n') { Show(Sx - 1, Sy); }
+                        if (Sy < Y - 1 && Map.RevealedMap[Sx - 1, Sy + 1] == 'n') { Show(Sx - 1, Sy + 1); }
+                        if (Sy > 0 && Map.RevealedMap[Sx - 1, Sy - 1] == 'n') { Show(Sx - 1, Sy - 1); }
                     }
-                    if (Sy < y - 1 && Map.revealedMap[Sx, Sy + 1] == 'n') { Show(Sx, Sy + 1); }
-                    if (Sy > 0 && Map.revealedMap[Sx, Sy - 1] == 'n') { Show(Sx, Sy - 1); }
+                    if (Sy < Y - 1 && Map.RevealedMap[Sx, Sy + 1] == 'n') { Show(Sx, Sy + 1); }
+                    if (Sy > 0 && Map.RevealedMap[Sx, Sy - 1] == 'n') { Show(Sx, Sy - 1); }
                 }
                 else
                 if (Number >= 9)
                 {
                     drawBrush.Color = System.Drawing.Color.Black;
-                    formGraphics.FillRectangle(drawBrush, new Rectangle(xx, yy, perSqrX, persqrY));
+                    formGraphics.FillRectangle(drawBrush, new Rectangle(xx, yy, perSqrX, perSqrY));
                 }
                 else
                 {
@@ -308,11 +309,11 @@ namespace Minesweeper
                 label4.Visible = true;
                 label5.Visible = true;
                 textBox1.Visible = true;
-                textBox1.Text = string.Concat(x);
+                textBox1.Text = string.Concat(X);
                 textBox2.Visible = true;
-                textBox2.Text = string.Concat(y);
+                textBox2.Text = string.Concat(Y);
                 textBox3.Visible = true;
-                textBox3.Text = string.Concat(bombTotal);
+                textBox3.Text = string.Concat(BombTotal);
                 radioButton1.Visible = true;
                 radioButton2.Visible = true;
                 radioButton3.Visible = true;
@@ -322,12 +323,12 @@ namespace Minesweeper
             }
             else if (button3.Text == "ok")
             {
-                    if (textBox1.Text != "") x = int.Parse(textBox1.Text);
-                    if (textBox2.Text != "") y = int.Parse(textBox2.Text);
-                    if (textBox3.Text != "") bombTotal = int.Parse(textBox3.Text);
-                    if (bombTotal + 9 >= x * y) bombTotal = x * y - 10;
+                    if (textBox1.Text != "") X = int.Parse(textBox1.Text);
+                    if (textBox2.Text != "") Y = int.Parse(textBox2.Text);
+                    if (textBox3.Text != "") BombTotal = int.Parse(textBox3.Text);
+                    if (BombTotal + 9 >= X * Y) BombTotal = X * Y - 10;
                 
-                bombCurrent = bombTotal;
+                bombCurrent = BombTotal;
                 button1.Visible = true;
                 button2.Visible = true;
                 button3.Text = "Settings";
@@ -349,21 +350,27 @@ namespace Minesweeper
         {
             for (int k  = 0; k < int.Parse(textBox4.Text); k++)
             {
-
-
-                Solver.Solv();
-                for (int i = 0; i < x; i++)
-                {
-                    for (int j = 0; j < y; j++)
+                bool possible;
+                possible =Solver.Solv();
+                if (!possible) {
+                    if (bombCurrent != 0)
                     {
-                        if (Map.revealedMap[i, j] == 's')
+                        MessageBox.Show("You can do it on your own!");
+                        break;
+                     }
+                }
+                for (int i = 0; i < X; i++)
+                {
+                    for (int j = 0; j < Y; j++)
+                    {
+                        if (Map.RevealedMap[i, j] == 's')
                         {
-                            Map.revealedMap[i, j] = 'n';
+                            Map.RevealedMap[i, j] = 'n';
                             Show(i, j);
                         }
-                        else if (Map.revealedMap[i, j] == 'm')
+                        else if (Map.RevealedMap[i, j] == 'm')
                         {
-                            Map.revealedMap[i, j] = 'n';
+                            Map.RevealedMap[i, j] = 'n';
                             FillFlag(i, j);
                         }
                     }
@@ -423,263 +430,6 @@ namespace Minesweeper
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             radioButton1.Checked = true;
-        }
-    }
-    //class with map - map is hiden from form1 class
-    public static class Map
-    {
-        private static int[,] map = new int[Form1.x + 1, Form1.y + 1];
-        public static char[,] revealedMap = new char[Form1.x + 1, Form1.y + 1];
-        public static int[,] publicMap = new int[Form1.x + 1, Form1.y + 1];
-
-        //place correct amount of mins into sheet
-        public static void GenerateMins(int sqX, int sqY)
-        {
-            map = new int[Form1.x + 1, Form1.y + 1];
-            revealedMap = new char[Form1.x + 1, Form1.y + 1];
-            for (int i = 0; i < Form1.y; i++)
-            {
-                for (int j = 0; j < Form1.x; j++)
-                {
-                    map[j, i] = 0;
-                }
-            }
-
-            for (int j = -1; j < 2; j++)
-            {
-                for (int k = -1; k < 2; k++)
-                {
-                    if ((sqX + j >= 0) && (sqX + j < Form1.x) && (sqY + k >= 0) && (sqY + k < Form1.y))
-                    {
-                        map[sqX + j, sqY + k] = 100;
-                    }
-                }
-            }
-
-            Random Rndm = new Random();
-            for (int i = 0; i < Form1.bombTotal; i++)
-            {
-                bool Ok = false;
-                while (Ok == false)
-                {
-                    int bombPlacementX = Rndm.Next(Form1.x);
-                    int bombPlacementY = Rndm.Next(Form1.y);
-                    if (map[bombPlacementX, bombPlacementY] < 9)
-                    {
-                        Ok = true;
-                        map[bombPlacementX, bombPlacementY] = 9;
-                        for (int j = -1; j < 2; j++)
-                        {
-                            for (int k = -1; k < 2; k++)
-                            {
-                                if (bombPlacementX + j >= 0 && bombPlacementY + k >= 0 && bombPlacementX + j < Form1.x && bombPlacementY + k < Form1.y)
-                                {
-                                    map[bombPlacementX + j, bombPlacementY + k] += 1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int j = -1; j < 2; j++)
-            {
-                for (int k = -1; k < 2; k++)
-                {
-                    if ((sqX + j >= 0) && (sqX + j < Form1.x) && (sqY + k >= 0) && (sqY + k < Form1.y))
-                    {
-                        map[sqX + j, sqY + k] -= 100;
-                    }
-                }
-            }
-            InicializeRevealedMap();
-        }
-
-
-        public static void InicializeRevealedMap()
-        {
-            for (int i = 0; i < Form1.x; i++)
-            {
-                for (int j = 0; j < Form1.y; j++)
-                {
-                    revealedMap[i, j] = 'n';
-                }
-            }
-        }
-
-        //check if on every bomb is flag (it's not possible to place more flags
-        //than amount of bombs so it's correct deciding
-
-        public static bool CheckWin()
-        {
-            bool ok = true;
-            for (int i = 0; i < Form1.x; i++)
-            {
-                for (int j = 0; j < Form1.y; j++)
-                {
-                    if (map[i, j] >= 9)
-                    {
-                        if (revealedMap[i, j] != 'f') { ok = false; }
-                    }
-                }
-            }
-            return ok;
-        }
-        //Answer about player's move. If he blow the mine, make new sheet so it's impossible
-        // to continue (player will be returned into menu)
-        public static int Reveal(int Rx, int Ry)
-        {
-            if (map[Rx, Ry] > 50) { return 0; }
-            else
-            {
-                if (map[Rx, Ry] >= 9)
-                {
-                    GenerateMins(1, 1);
-                    return -1;
-                }
-                else
-                    return map[Rx, Ry];
-            }
-        }
-    }
-
-    public static class Solver
-    {
-        public static int lines = 0;
-        public static int variables = 0;
-        public static bool br = false;
-        public static Dictionary<string, int> dict;
-        public static int[,] matrixA= new int[100,100];
-        public static void Solv()
-        {
-            //dict.Clear();
-            lines = 0;
-            variables = 1;
-            br = false;
-            Basic();
-            if (!br) { Matrix();}
-        }
-        //check if situation is obvious around one rectangle
-        public static void Basic()
-        {
-            for (int i = 0; i < Form1.x; i++)
-            {
-                for (int j = 0; j < Form1.y; j++)
-                {
-                    if (!br) 
-                    {
-                        if ((Map.revealedMap[i, j] - '0' > 0) && (Map.revealedMap[i, j] - '0' <= 9))
-                        {
-                            int flags = 0;
-                            int spots = 0;
-                            for (int k = -1; k < 2; k++)
-                            {
-                                for (int l = -1; l < 2; l++)
-                                {
-                                    if ((i + k >= 0) && (i + k < Form1.x) && (j + l >= 0) && (j + l < Form1.y))
-                                    {
-                                        if (Map.revealedMap[i + k, j + l] == 'f')
-                                        {
-                                            flags += 1;
-                                        }
-                                        if (Map.revealedMap[i + k, j + l] == 'n')
-                                        {
-                                            spots += 1;
-                                        }
-                                    }
-                                }
-                            }
-                            int rest = Map.revealedMap[i, j] - '0' - flags;
-                            if ((rest == 0) && (spots != 0))
-                            {
-                                MarkSafe(i, j);
-                                br = true;
-                            }
-                            else if ((rest == spots) && (spots != 0))
-                            {
-                                MarkBombs(i, j);
-                                br = true;
-                            }
-                            //else if (spots != 0) { AddLine(i, j,rest); }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void MarkSafe(int xx, int yy)
-        {
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    if ((i + xx >= 0) && (i + xx < Form1.x) && (j + yy >= 0) && (j + yy < Form1.y))
-                    {
-                        if (Map.revealedMap[i + xx, j + yy] == 'n')
-                        {
-                            Map.revealedMap[i + xx, j + yy] = 's';
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void MarkBombs(int xx, int yy)
-        {
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    if ((i + xx >= 0) && (i + xx < Form1.x) && (j + yy >= 0) && (j + yy < Form1.y))
-                    {
-                        if (Map.revealedMap[i + xx, j + yy] == 'n')
-                        {
-                            Map.revealedMap[i + xx, j + yy] = 'm';
-                        }
-                    }
-                }
-            }
-        }
-        //Code bellow is under construction and it's not called by the rest of the code
-        //
-        //
-        //
-
-        public static void Matrix()
-        {
-            SolveMatrix();
-        }
-
-        public static void SolveMatrix()
-        {
-
-        }
-
-        public static void AddLine(int Ax,int Ay,int result)
-        {
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    if ((i + Ax >= 0) && (i + Ax < Form1.x) && (j + Ay >= 0) && (j + Ay < Form1.y))
-                    {
-                        if (Map.revealedMap[i + Ax, j + Ay] == 'n')
-                        {
-                            string s = string.Format("{0},{1}", i + Ax, j + Ay);
-                            if (dict.ContainsKey(s))
-                            {
-                                matrixA[dict[s], lines] = 1;
-                            } else
-                            {
-                                dict.Add(s, variables);
-                                variables++;
-                            } 
-                        }
-                    }
-                }
-            }
-            matrixA[0, lines] = result;
-            lines += 1;
         }
     }
 }
