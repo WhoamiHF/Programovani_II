@@ -98,46 +98,5 @@ namespace Minesweeper
                 }
             }
         }
-        //Code bellow is under construction and it's not called by the rest of the code
-        //
-        //
-        //
-        /*
-        public static void Matrix()
-        {
-            SolveMatrix();
-        }
-
-        public static void SolveMatrix()
-        {
-
-        }
-
-        public static void AddLine(int Ax,int Ay,int result)
-        {
-            for (int i = -1; i < 2; i++)
-            {
-                for (int j = -1; j < 2; j++)
-                {
-                    if ((i + Ax >= 0) && (i + Ax < Form1.x) && (j + Ay >= 0) && (j + Ay < Form1.y))
-                    {
-                        if (Map.RevealedMap[i + Ax, j + Ay] == 'n')
-                        {
-                            string s = string.Format("{0},{1}", i + Ax, j + Ay);
-                            if (dict.ContainsKey(s))
-                            {
-                                matrixA[dict[s], lines] = 1;
-                            } else
-                            {
-                                dict.Add(s, variables);
-                                variables++;
-                            } 
-                        }
-                    }
-                }
-            }
-            matrixA[0, lines] = result;
-            lines += 1;
-        }*/
     }
     }
